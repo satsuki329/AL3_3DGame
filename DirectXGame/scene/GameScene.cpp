@@ -61,6 +61,10 @@ void GameScene::Initialize() {
 	worldtransformenemy.Initialize();
 
 	srand((unsigned int)time(NULL));
+
+	debugtext = DebugText::GetInstance();
+	debugtext->Initialize();
+
 }
 
 void GameScene::Update() { 
@@ -123,6 +127,15 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
+	char str[100];
+	sprintf_s(str, "SCORE %d", gamescore);
+	debugtext->Print(str, 200, 10, 2);
+
+	char str2[100];
+	sprintf_s(str2, "LIFE %d", playerlife);
+	debugtext->Print(str2, 800, 10, 2);
+
+	debugtext->DrawAll();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
@@ -240,6 +253,11 @@ void GameScene::CollisionPlayerEnemy(){
 		if (dx < 1 && dz < 1)
 		{
 			enemyflag = 0;
+			playerlife -= 1;
+			if (playerlife == 0)
+			{
+				playerlife = 0;
+			}
 		}
 	}
 }
@@ -253,6 +271,7 @@ void GameScene::CollisionBeamEnemy() {
 		if (dx < 1 && dz < 1) {
 			enemyflag = 0;
 			beamflag = 0;
+			gamescore += 1;
 		}
 	}
 }

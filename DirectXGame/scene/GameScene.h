@@ -8,6 +8,7 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "DebugText.h"
 
 /// <summary>
 /// ゲームシーン
@@ -88,6 +89,9 @@ private: // メンバ変数
 	WorldTransform worldtransformenemy;
 	int enemyflag = 0;
 
+	DebugText* debugtext = nullptr;
+	int gamescore = 0;
+	int playerlife = 3;
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

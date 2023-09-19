@@ -21,7 +21,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	
 	// ゲームウィンドウの作成
 	win = WinApp::GetInstance();
-	win->CreateGameWindow(L" GC2D_10_サメシマリツキ_AL3");
+	win->CreateGameWindow(L" GC2D_10_サメシマ_リツキ_AL3");
 	
 
 	// DirectX初期化処理

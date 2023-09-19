@@ -2,6 +2,7 @@
 #include "TextureManager.h"
 #include <cassert>
 #include "MathUtilityForText.h"
+#include "time.h"
 
 GameScene::GameScene() { 
 
@@ -12,6 +13,7 @@ GameScene::~GameScene() {
 	delete modelstage;
 	delete modelplayer;
 	delete modelbeam;
+	delete modelenemy;
 }
 
 void GameScene::Initialize() {
@@ -52,11 +54,19 @@ void GameScene::Initialize() {
 	modelbeam = Model::Create();
 	worldtransformbeam.scale_ = {0.3f, 0.3f, 0.3f};
 	worldtransformbeam.Initialize();
+
+	texturehandleenemy = TextureManager::Load("enemy.png");
+	modelenemy = Model::Create();
+	worldtransformenemy.scale_ = {0.5f, 0.5f, 0.5f};
+	worldtransformenemy.Initialize();
+
+	srand((unsigned int)time(NULL));
 }
 
 void GameScene::Update() { 
 	PlayerUpdate();
 	BeamUpdate();
+	EnemyUpdate();
 }
 
 void GameScene::Draw() {
@@ -94,6 +104,11 @@ void GameScene::Draw() {
 	if (beamflag == 1)
 	{
 		modelbeam->Draw(worldtransformbeam, viewprojection, texturehandlebeam);
+	}
+
+	if (enemyflag == 1)
+	{
+		modelenemy->Draw(worldtransformenemy, viewprojection, texturehandleenemy);
 	}
 
 	// 3Dオブジェクト描画後処理
@@ -171,5 +186,41 @@ void GameScene::BeamBorn() {
 		worldtransformbeam.translation_.z = worldtransformplayer.translation_.z;
 
 		beamflag = 1;
+	}
+}
+
+void GameScene::EnemyUpdate() { 
+	EnemyMove();
+	EnemyBorn();
+
+	worldtransformenemy.matWorld_ = MakeAffineMatrix(
+	    worldtransformenemy.scale_, 
+		worldtransformenemy.rotation_,
+	    worldtransformenemy.translation_);
+
+	worldtransformenemy.TransferMatrix();
+}
+
+void GameScene::EnemyMove() { 
+	if (enemyflag == 1)
+	{
+		worldtransformenemy.translation_.z -= 0.3f;
+		worldtransformenemy.rotation_.x -= 0.1f;
+		if (worldtransformenemy.translation_.z < -5)
+		{
+			enemyflag = 0;
+		}
+	}
+}
+
+void GameScene::EnemyBorn() { 
+	if (enemyflag == 0)
+	{
+		int x = rand() % 80;
+		float x2 = (float)x / 10 - 4;
+
+		enemyflag = 1;
+		worldtransformenemy.translation_.z = 40;
+		worldtransformenemy.translation_.x = x2;
 	}
 }

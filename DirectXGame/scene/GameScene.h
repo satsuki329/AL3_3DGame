@@ -48,6 +48,13 @@ public: // メンバ関数
 
 	void BeamBorn();
 
+	void EnemyUpdate();
+
+	void EnemyMove();
+
+	void EnemyBorn();
+
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -69,8 +76,12 @@ private: // メンバ変数
 	uint32_t texturehandlebeam = 0;
 	Model* modelbeam = nullptr;
 	WorldTransform worldtransformbeam;
-
 	int beamflag = 0;
+
+	uint32_t texturehandleenemy = 0;
+	Model* modelenemy = nullptr;
+	WorldTransform worldtransformenemy;
+	int enemyflag = 0;
 
 	/// <summary>
 	/// ゲームシーン用

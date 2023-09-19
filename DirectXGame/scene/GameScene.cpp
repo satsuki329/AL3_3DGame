@@ -3,6 +3,7 @@
 #include <cassert>
 #include "ImGuiManager.h"
 #include "PrimitiveDrawer.h"
+#include "AxisIndicator.h"
 
 GameScene::GameScene() {}
 
@@ -26,6 +27,8 @@ void GameScene::Initialize() {
 	audio_->PlayWave(sounddatehandle);
 	PrimitiveDrawer::GetInstance()->SetViewProjection(&viewProjection);
 	debugCamera = new DebugCamera(1280, 720);
+	AxisIndicator::GetInstance()->SetVisible(true);
+	AxisIndicator::GetInstance()->SetTargetViewProjection(&debugCamera->GetViewProjection());
 }
 
 

@@ -1,21 +1,45 @@
 #include "GameScene.h"
 #include "TextureManager.h"
 #include <cassert>
+#include "MathUtilityForText.h"
 
 GameScene::GameScene() { 
-	delete spriteBG; 
 
 }
 
-GameScene::~GameScene() {}
+GameScene::~GameScene() { 
+	delete spriteBG;
+	delete modelstage;
+}
 
 void GameScene::Initialize() {
 
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
+
 	texturehandleBG = TextureManager::Load("bg.jpg");
 	spriteBG = Sprite::Create(texturehandleBG, {0, 0});
+
+	viewprojection.Initialize();
+
+	texturehandlestage = TextureManager::Load("stage.jpg");
+	modelstage = Model::Create();
+	worldtransformstage.Initialize();
+
+	viewprojection.translation_.y = 1;
+	viewprojection.translation_.z = -6;
+	viewprojection.Initialize();
+
+	worldtransformstage.translation_ = {0, -1.5f, 0};
+	worldtransformstage.scale_ = {4.5f, 1, 40};
+
+	worldtransformstage.matWorld_ = MakeAffineMatrix(
+	    worldtransformstage.scale_,
+		worldtransformstage.rotation_,
+	    worldtransformstage.translation_);
+
+	worldtransformstage.TransferMatrix();
 }
 
 void GameScene::Update() {}
@@ -48,6 +72,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
+	modelstage->Draw(worldtransformstage, viewprojection, texturehandlestage);
+
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

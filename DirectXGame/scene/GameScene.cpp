@@ -10,6 +10,7 @@ GameScene::GameScene() {
 GameScene::~GameScene() { 
 	delete spriteBG;
 	delete modelstage;
+	delete modelplayer;
 }
 
 void GameScene::Initialize() {
@@ -40,6 +41,11 @@ void GameScene::Initialize() {
 	    worldtransformstage.translation_);
 
 	worldtransformstage.TransferMatrix();
+
+	texturehandleplayer = TextureManager::Load("player.png");
+	modelplayer = Model::Create();
+	worldtransformplayer.scale_ = {0.5f, 0.5f, 0.5f};
+	worldtransformplayer.Initialize();
 }
 
 void GameScene::Update() {}
@@ -74,6 +80,7 @@ void GameScene::Draw() {
 	/// </summary>
 	modelstage->Draw(worldtransformstage, viewprojection, texturehandlestage);
 
+	modelplayer->Draw(worldtransformplayer, viewprojection, texturehandleplayer);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

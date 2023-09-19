@@ -11,6 +11,7 @@ GameScene::~GameScene() {
 	delete spriteBG;
 	delete modelstage;
 	delete modelplayer;
+	delete modelbeam;
 }
 
 void GameScene::Initialize() {
@@ -46,10 +47,16 @@ void GameScene::Initialize() {
 	modelplayer = Model::Create();
 	worldtransformplayer.scale_ = {0.5f, 0.5f, 0.5f};
 	worldtransformplayer.Initialize();
+
+	texturehandlebeam = TextureManager::Load("beam.png");
+	modelbeam = Model::Create();
+	worldtransformbeam.scale_ = {0.3f, 0.3f, 0.3f};
+	worldtransformbeam.Initialize();
 }
 
 void GameScene::Update() { 
 	PlayerUpdate();
+	BeamUpdate();
 }
 
 void GameScene::Draw() {
@@ -83,6 +90,11 @@ void GameScene::Draw() {
 	modelstage->Draw(worldtransformstage, viewprojection, texturehandlestage);
 
 	modelplayer->Draw(worldtransformplayer, viewprojection, texturehandleplayer);
+
+	if (beamflag == 1)
+	{
+		modelbeam->Draw(worldtransformbeam, viewprojection, texturehandlebeam);
+	}
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
@@ -125,4 +137,39 @@ void GameScene::PlayerUpdate() {
 	    worldtransformplayer.translation_);
 
 	worldtransformplayer.TransferMatrix();
+}
+
+void GameScene::BeamUpdate() {
+	BeamMoob();
+	BeamBorn();
+
+	worldtransformbeam.matWorld_ = MakeAffineMatrix(
+	    worldtransformbeam.scale_, 
+		worldtransformbeam.rotation_, 
+		worldtransformbeam.translation_);
+
+	worldtransformbeam.TransferMatrix();
+}
+
+void GameScene::BeamMoob() { 
+	if (beamflag == 1)
+	{
+		worldtransformbeam.translation_.z += 0.1f; 
+		worldtransformbeam.rotation_.x += 0.1f;
+		if (worldtransformbeam.translation_.z > 40)
+		{
+			beamflag = 0;
+		}
+	}
+}
+
+void GameScene::BeamBorn() { 
+	if (input_->PushKey(DIK_SPACE) && beamflag == 0)
+	{
+		worldtransformbeam.translation_.x = worldtransformplayer.translation_.x;
+		worldtransformbeam.translation_.y = worldtransformplayer.translation_.y;
+		worldtransformbeam.translation_.z = worldtransformplayer.translation_.z;
+
+		beamflag = 1;
+	}
 }

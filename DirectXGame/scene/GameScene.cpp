@@ -67,6 +67,7 @@ void GameScene::Update() {
 	PlayerUpdate();
 	BeamUpdate();
 	EnemyUpdate();
+	Collision();
 }
 
 void GameScene::Draw() {
@@ -222,5 +223,36 @@ void GameScene::EnemyBorn() {
 		enemyflag = 1;
 		worldtransformenemy.translation_.z = 40;
 		worldtransformenemy.translation_.x = x2;
+	}
+}
+
+void GameScene::Collision(){ 
+	CollisionPlayerEnemy();
+	CollisionBeamEnemy();
+}
+
+void GameScene::CollisionPlayerEnemy(){ 
+	if (enemyflag == 1)
+	{
+		float dx = abs(worldtransformplayer.translation_.x - worldtransformenemy.translation_.x);
+		float dz = abs(worldtransformplayer.translation_.z - worldtransformenemy.translation_.z);
+
+		if (dx < 1 && dz < 1)
+		{
+			enemyflag = 0;
+		}
+	}
+}
+
+void GameScene::CollisionBeamEnemy() { 
+	if (enemyflag == 1 && beamflag == 1)
+	{
+		float dx = abs(worldtransformbeam.translation_.x - worldtransformenemy.translation_.x);
+		float dz = abs(worldtransformbeam.translation_.z - worldtransformenemy.translation_.z);
+
+		if (dx < 1 && dz < 1) {
+			enemyflag = 0;
+			beamflag = 0;
+		}
 	}
 }

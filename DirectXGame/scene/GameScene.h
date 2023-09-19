@@ -54,6 +54,11 @@ public: // メンバ関数
 
 	void EnemyBorn();
 
+	void Collision();
+
+	void CollisionPlayerEnemy();
+
+	void CollisionBeamEnemy();
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;

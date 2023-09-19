@@ -48,7 +48,9 @@ void GameScene::Initialize() {
 	worldtransformplayer.Initialize();
 }
 
-void GameScene::Update() {}
+void GameScene::Update() { 
+	PlayerUpdate();
+}
 
 void GameScene::Draw() {
 
@@ -98,4 +100,29 @@ void GameScene::Draw() {
 	Sprite::PostDraw();
 
 #pragma endregion
+}
+
+void GameScene::PlayerUpdate() { 
+	if (input_->PushKey(DIK_RIGHT))
+	{
+		worldtransformplayer.translation_.x += 0.1f;
+		if (worldtransformplayer.translation_.x > 4.0f)
+		{
+			worldtransformplayer.translation_.x = 4.0f;
+		}
+	}
+
+	if (input_->PushKey(DIK_LEFT)) {
+		worldtransformplayer.translation_.x -= 0.1f;
+		if (worldtransformplayer.translation_.x < -4.0f) {
+			worldtransformplayer.translation_.x = -4.0f;
+		}
+	}
+
+	worldtransformplayer.matWorld_ = MakeAffineMatrix(
+	    worldtransformplayer.scale_, 
+		worldtransformplayer.rotation_,
+	    worldtransformplayer.translation_);
+
+	worldtransformplayer.TransferMatrix();
 }

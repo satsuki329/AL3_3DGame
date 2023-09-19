@@ -4,14 +4,17 @@
 
 GameScene::GameScene() {}
 
-GameScene::~GameScene() {}
+GameScene::~GameScene() { delete sprite; }
 
 void GameScene::Initialize() {
 
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
+	texturehandle = TextureManager::Load("suraimu1.png");
+	sprite = Sprite::Create(texturehandle, {100, 50});
 }
+
 
 void GameScene::Update() {}
 
@@ -53,6 +56,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
+	sprite->Draw();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();

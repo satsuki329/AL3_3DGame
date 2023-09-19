@@ -45,6 +45,9 @@ private: // メンバ変数
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
 
+	uint32_t texturehandleBG = 0;
+	Sprite* spriteBG = nullptr;
+
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

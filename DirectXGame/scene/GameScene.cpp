@@ -2,7 +2,10 @@
 #include "TextureManager.h"
 #include <cassert>
 
-GameScene::GameScene() {}
+GameScene::GameScene() { 
+	delete spriteBG; 
+
+}
 
 GameScene::~GameScene() {}
 
@@ -11,6 +14,8 @@ void GameScene::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
+	texturehandleBG = TextureManager::Load("bg.jpg");
+	spriteBG = Sprite::Create(texturehandleBG, {0, 0});
 }
 
 void GameScene::Update() {}
@@ -27,6 +32,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
+	spriteBG->Draw();
+
 
 	// スプライト描画後処理
 	Sprite::PostDraw();

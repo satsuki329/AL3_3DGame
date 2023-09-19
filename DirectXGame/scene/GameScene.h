@@ -53,6 +53,8 @@ private: // メンバ変数
 	uint32_t texturehandle = 0;
 	uint32_t sounddatehandle = 0;
 
+	float inputFloat3[3] = {0, 0, 0};
+
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

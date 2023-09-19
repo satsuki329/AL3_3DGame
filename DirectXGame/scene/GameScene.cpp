@@ -34,8 +34,10 @@ void GameScene::Update() {
 	sprite->SetPosition(position);
 
 	ImGui::Begin("Debug1");
-	ImGui::Text("kamata tarou %d.%d,%d", 2050, 12, 31);
+	ImGui::InputFloat3("InputFloat3", inputFloat3);
+	ImGui::SliderFloat3("SliderFloat3", inputFloat3, 0.0f, 1.0f);
 	ImGui::End();
+
 }
 
 void GameScene::Draw() {

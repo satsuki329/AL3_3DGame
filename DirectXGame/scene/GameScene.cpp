@@ -1,6 +1,7 @@
 #include "GameScene.h"
 #include "TextureManager.h"
 #include <cassert>
+#include "ImGuiManager.h"
 
 GameScene::GameScene() {}
 
@@ -31,6 +32,10 @@ void GameScene::Update() {
 	position.y += 1.0f;
 
 	sprite->SetPosition(position);
+
+	ImGui::Begin("Debug1");
+	ImGui::Text("kamata tarou %d.%d,%d", 2050, 12, 31);
+	ImGui::End();
 }
 
 void GameScene::Draw() {

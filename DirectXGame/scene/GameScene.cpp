@@ -16,7 +16,14 @@ void GameScene::Initialize() {
 }
 
 
-void GameScene::Update() {}
+void GameScene::Update() { 
+	Vector2 position = sprite->GetPosition();
+
+	position.x += 2.0f;
+	position.y += 1.0f;
+
+	sprite->SetPosition(position);
+}
 
 void GameScene::Draw() {
 

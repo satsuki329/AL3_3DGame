@@ -4,7 +4,10 @@
 
 GameScene::GameScene() {}
 
-GameScene::~GameScene() { delete sprite; }
+GameScene::~GameScene() { 
+	delete sprite;
+	delete model;
+}
 
 void GameScene::Initialize() {
 
@@ -13,6 +16,9 @@ void GameScene::Initialize() {
 	audio_ = Audio::GetInstance();
 	texturehandle = TextureManager::Load("suraimu1.png");
 	sprite = Sprite::Create(texturehandle, {100, 50});
+	model = Model::Create();
+	worldTransform.Initialize();
+	viewProjection.Initialize();
 }
 
 
@@ -51,6 +57,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
+	model->Draw(worldTransform, viewProjection, texturehandle);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
@@ -63,7 +70,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
-	sprite->Draw();
+	//sprite->Draw();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();

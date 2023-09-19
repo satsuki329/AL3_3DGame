@@ -19,6 +19,11 @@ public: // メンバ関数
 	/// コンストクラタ
 	/// </summary>
 	GameScene();
+	Sprite* sprite = nullptr;
+	Model* model = nullptr;
+
+	WorldTransform worldTransform;
+	ViewProjection viewProjection;
 
 	/// <summary>
 	/// デストラクタ
@@ -39,8 +44,6 @@ public: // メンバ関数
 	/// 描画
 	/// </summary>
 	void Draw();
-
-	Sprite* sprite = nullptr;
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;

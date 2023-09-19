@@ -9,6 +9,7 @@ GameScene::GameScene() {}
 GameScene::~GameScene() { 
 	delete sprite;
 	delete model;
+	delete debugCamera;
 }
 
 void GameScene::Initialize() {
@@ -24,6 +25,7 @@ void GameScene::Initialize() {
 	sounddatehandle = audio_->LoadWave("fanfare.wav");
 	audio_->PlayWave(sounddatehandle);
 	PrimitiveDrawer::GetInstance()->SetViewProjection(&viewProjection);
+	debugCamera = new DebugCamera(1280, 720);
 }
 
 
@@ -34,6 +36,8 @@ void GameScene::Update() {
 	position.y += 1.0f;
 
 	sprite->SetPosition(position);
+
+	debugCamera->Update();
 
 	//ImGui::Begin("Debug1");
 	//ImGui::InputFloat3("InputFloat3", inputFloat3);
@@ -71,10 +75,11 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 	//model->Draw(worldTransform, viewProjection, texturehandle);
+	model->Draw(worldTransform, debugCamera->GetViewProjection(), texturehandle);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
-	PrimitiveDrawer::GetInstance()->DrawLine3d({0, 0, 0}, {10, 10, 10}, {1.0f, 0.0f, 0.0f, 1.0f});
+	//PrimitiveDrawer::GetInstance()->DrawLine3d({0, 0, 0}, {10, 10, 10}, {1.0f, 0.0f, 0.0f, 1.0f});
 #pragma endregion
 
 #pragma region 前景スプライト描画

@@ -2,6 +2,7 @@
 #include "TextureManager.h"
 #include <cassert>
 #include "ImGuiManager.h"
+#include "PrimitiveDrawer.h"
 
 GameScene::GameScene() {}
 
@@ -22,6 +23,7 @@ void GameScene::Initialize() {
 	viewProjection.Initialize();
 	sounddatehandle = audio_->LoadWave("fanfare.wav");
 	audio_->PlayWave(sounddatehandle);
+	PrimitiveDrawer::GetInstance()->SetViewProjection(&viewProjection);
 }
 
 
@@ -33,12 +35,12 @@ void GameScene::Update() {
 
 	sprite->SetPosition(position);
 
-	ImGui::Begin("Debug1");
-	ImGui::InputFloat3("InputFloat3", inputFloat3);
-	ImGui::SliderFloat3("SliderFloat3", inputFloat3, 0.0f, 1.0f);
-	ImGui::End();
+	//ImGui::Begin("Debug1");
+	//ImGui::InputFloat3("InputFloat3", inputFloat3);
+	//ImGui::SliderFloat3("SliderFloat3", inputFloat3, 0.0f, 1.0f);
+	//ImGui::End();
 
-	ImGui::ShowDemoWindow();
+	//ImGui::ShowDemoWindow();
 
 }
 
@@ -68,10 +70,11 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-	model->Draw(worldTransform, viewProjection, texturehandle);
+	//model->Draw(worldTransform, viewProjection, texturehandle);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
+	PrimitiveDrawer::GetInstance()->DrawLine3d({0, 0, 0}, {10, 10, 10}, {1.0f, 0.0f, 0.0f, 1.0f});
 #pragma endregion
 
 #pragma region 前景スプライト描画
@@ -82,6 +85,7 @@ void GameScene::Draw() {
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
 	//sprite->Draw();
+
 
 	// スプライト描画後処理
 	Sprite::PostDraw();

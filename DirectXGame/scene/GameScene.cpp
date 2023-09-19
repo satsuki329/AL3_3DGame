@@ -38,6 +38,8 @@ void GameScene::Update() {
 	ImGui::SliderFloat3("SliderFloat3", inputFloat3, 0.0f, 1.0f);
 	ImGui::End();
 
+	ImGui::ShowDemoWindow();
+
 }
 
 void GameScene::Draw() {

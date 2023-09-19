@@ -51,6 +51,7 @@ private: // メンバ変数
 	Audio* audio_ = nullptr;
 
 	uint32_t texturehandle = 0;
+	uint32_t sounddatehandle = 0;
 
 	/// <summary>
 	/// ゲームシーン用

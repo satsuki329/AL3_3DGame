@@ -1,0 +1,17 @@
+C:\KamataEngine\DirectXGame\2d\DebugText.cpp;C:\KamataEngine\DirectXGame\x64\Debug\DebugText.obj
+C:\KamataEngine\DirectXGame\2d\Sprite.cpp;C:\KamataEngine\DirectXGame\x64\Debug\Sprite.obj
+C:\KamataEngine\DirectXGame\3d\DebugCamera.cpp;C:\KamataEngine\DirectXGame\x64\Debug\DebugCamera.obj
+C:\KamataEngine\DirectXGame\3d\LightGroup.cpp;C:\KamataEngine\DirectXGame\x64\Debug\LightGroup.obj
+C:\KamataEngine\DirectXGame\3d\Material.cpp;C:\KamataEngine\DirectXGame\x64\Debug\Material.obj
+C:\KamataEngine\DirectXGame\3d\Mesh.cpp;C:\KamataEngine\DirectXGame\x64\Debug\Mesh.obj
+C:\KamataEngine\DirectXGame\3d\Model.cpp;C:\KamataEngine\DirectXGame\x64\Debug\Model.obj
+C:\KamataEngine\DirectXGame\3d\ViewProjection.cpp;C:\KamataEngine\DirectXGame\x64\Debug\ViewProjection.obj
+C:\KamataEngine\DirectXGame\3d\WorldTransform.cpp;C:\KamataEngine\DirectXGame\x64\Debug\WorldTransform.obj
+C:\KamataEngine\DirectXGame\audio\Audio.cpp;C:\KamataEngine\DirectXGame\x64\Debug\Audio.obj
+C:\KamataEngine\DirectXGame\AxisIndicator.cpp;C:\KamataEngine\DirectXGame\x64\Debug\AxisIndicator.obj
+C:\KamataEngine\DirectXGame\base\DirectXCommon.cpp;C:\KamataEngine\DirectXGame\x64\Debug\DirectXCommon.obj
+C:\KamataEngine\DirectXGame\base\TextureManager.cpp;C:\KamataEngine\DirectXGame\x64\Debug\TextureManager.obj
+C:\KamataEngine\DirectXGame\base\WinApp.cpp;C:\KamataEngine\DirectXGame\x64\Debug\WinApp.obj
+C:\KamataEngine\DirectXGame\input\Input.cpp;C:\KamataEngine\DirectXGame\x64\Debug\Input.obj
+C:\KamataEngine\DirectXGame\main.cpp;C:\KamataEngine\DirectXGame\x64\Debug\main.obj
+C:\KamataEngine\DirectXGame\scene\GameScene.cpp;C:\KamataEngine\DirectXGame\x64\Debug\GameScene.obj

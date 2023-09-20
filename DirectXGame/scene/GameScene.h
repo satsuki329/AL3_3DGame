@@ -69,6 +69,15 @@ public: // メンバ関数
 
 	void GamePlayDraw2DNear();
 
+	void TitleUpdate();
+
+	void TitleDraw2DNear();
+
+	void GameOverUpdate();
+
+	void GameOverDraw2DNear();
+
+	void GamePlayStart();
 
 
 private: // メンバ変数
@@ -101,7 +110,20 @@ private: // メンバ変数
 
 	DebugText* debugtext = nullptr;
 	int gamescore = 0;
-	int playerlife = 3;
+	int playerlife = 1;
+
+	int sceneMode = 1;
+
+	uint32_t texturehandleTitle = 0;
+	Sprite* spriteTitle = nullptr;
+
+	uint32_t enter = 0;
+	Sprite* spriteenter = nullptr;
+
+	int gametimer = 0;
+
+	uint32_t texturehandlegameover = 0;
+	Sprite* spritegameover = nullptr;
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

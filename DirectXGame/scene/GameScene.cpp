@@ -12,6 +12,9 @@ GameScene::~GameScene() {
 	delete modelplayer;
 	delete modelbeam;
 	delete modelenemy;
+	delete spriteTitle;
+	delete spriteenter;
+	delete spritegameover;
 }
 
 void GameScene::Initialize() {
@@ -61,10 +64,37 @@ void GameScene::Initialize() {
 
 	debugtext = DebugText::GetInstance();
 	debugtext->Initialize();
+
+	texturehandleTitle = TextureManager::Load("title.png");
+	spriteTitle = Sprite::Create(texturehandleTitle, {0, 0});
+
+	enter = TextureManager::Load("enter.png");
+	spriteenter = Sprite::Create(enter, {420, 450});
+
+	texturehandlegameover = TextureManager::Load("gameover.png");
+	spritegameover = Sprite::Create(texturehandlegameover, {0, 0});
 }
 
 void GameScene::Update() { 
-	GamePlayUpdate();
+	switch (sceneMode)
+	{ case 0:
+		GamePlayUpdate();
+		
+		break;
+
+		case 1:
+		TitleUpdate();
+		GamePlayStart();
+
+		gametimer += 1;
+		break;
+
+	case 2:
+		GameOverUpdate();
+		gametimer += 1;
+		break;
+	}
+
 }
 
 void GameScene::GamePlayUpdate() {
@@ -87,8 +117,15 @@ void GameScene::Draw() {
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
 
-	GamePlayDraw2DBack();
+		switch (sceneMode) {
+	case 0:
+		GamePlayDraw2DBack();
 
+	case 2:
+		GamePlayDraw2DBack();
+
+		break;
+	}
 	// スプライト描画後処理
 	Sprite::PostDraw();
 	// 深度バッファクリア
@@ -103,7 +140,15 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 
-	GamePlayDraw3D();
+	switch (sceneMode) {
+	case 0:
+		GamePlayDraw3D();
+
+	case 2:
+		GamePlayDraw3D();
+
+		break;
+	}
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
@@ -117,7 +162,24 @@ void GameScene::Draw() {
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
 	
-	GamePlayDraw2DNear();
+	switch (sceneMode) {
+	case 0:
+		GamePlayDraw2DNear();
+
+		break;
+
+		case 1:
+		TitleDraw2DNear();
+
+		break;
+
+		case 2:
+		GamePlayDraw2DNear();
+
+		GameOverDraw2DNear();
+
+		break;
+	}
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
@@ -253,7 +315,7 @@ void GameScene::CollisionPlayerEnemy() {
 			enemyflag = 0;
 			playerlife -= 1;
 			if (playerlife == 0) {
-				playerlife = 0;
+				sceneMode = 2;
 			}
 		}
 	}
@@ -270,4 +332,49 @@ void GameScene::CollisionBeamEnemy() {
 			gamescore += 1;
 		}
 	}
+}
+
+void GameScene::TitleUpdate() {
+
+	if (input_->TriggerKey(DIK_RETURN))
+	{
+		sceneMode = 0;
+	}
+
+}
+
+void GameScene::TitleDraw2DNear() {
+
+	spriteTitle->Draw();
+
+	if (gametimer % 40 >= 20)
+	{
+		spriteenter->Draw();
+	}
+}
+
+void GameScene::GameOverUpdate() {
+
+	if (input_->TriggerKey(DIK_RETURN)) {
+		sceneMode = 1;
+	}
+}
+
+void GameScene::GameOverDraw2DNear() {
+
+	spritegameover->Draw(); 
+
+	if (gametimer % 40 >= 20) {
+		spriteenter->Draw();
+	}
+}
+
+void GameScene::GamePlayStart() {
+
+	gamescore = 0;
+	playerlife = 3;
+	beamflag = 0;
+	enemyflag = 0;
+	worldtransformplayer.translation_.x = 0;
+	PlayerUpdate();
 }

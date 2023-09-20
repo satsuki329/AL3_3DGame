@@ -225,7 +225,7 @@ void GameScene::GamePlayDraw3D() {
 
 	for (int i = 0; i < 10; i++)
 	{
-		if (enemyflag[i] == 1) {
+		if (enemyflag[i] != 0) {
 			modelenemy->Draw(worldtransformenemy[i], viewprojection, texturehandleenemy);
 		}
 	}
@@ -321,6 +321,7 @@ void GameScene::BeamBorn() {
 void GameScene::EnemyUpdate() {
 	EnemyMove();
 	EnemyBorn();
+	EnemyJunp();
 
 	for (int i = 0; i < 10; i++)
 	{
@@ -336,7 +337,8 @@ void GameScene::EnemyMove() {
 	for (int i = 0; i < 10; i++)
 	{
 		if (enemyflag[i] == 1) {
-			worldtransformenemy[i].translation_.z -= 0.3f;
+			worldtransformenemy[i].translation_.z -= 0.1f;
+			worldtransformenemy[i].translation_.z -= ingametimer / 1000.0f;
 			worldtransformenemy[i].rotation_.x -= 0.1f;
 			worldtransformenemy[i].translation_.x += enemyspeed[i];
 			if (worldtransformenemy[i].translation_.x > 4)
@@ -361,6 +363,7 @@ void GameScene::EnemyBorn() {
 		if (enemyflag[i] == 0) {
 			int x = rand() % 80;
 			float x2 = (float)x / 10 - 4;
+			worldtransformenemy[i].translation_.y = 0;
 
 			if (rand() % 10 == 0)
 			{
@@ -396,8 +399,9 @@ void GameScene::CollisionPlayerEnemy() {
 			    abs(worldtransformplayer.translation_.z - worldtransformenemy[i].translation_.z);
 
 			if (dx < 1 && dz < 1) {
-				enemyflag[i] = 0;
+				enemyflag[i] = 2;
 				playerlife -= 1;
+				enemyjunpspeed[i] = 1;
 
 				audio_->PlayWave(playerhitse);
 
@@ -425,7 +429,8 @@ void GameScene::CollisionBeamEnemy() {
 				if (dx < 1 && dz < 1) {
 					audio_->PlayWave(enemyhitse);
 
-					enemyflag[i] = 0;
+					enemyjunpspeed[i] = 1;
+					enemyflag[i] = 2;
 					beamflag[j] = 0;
 					gamescore += 1;
 				}
@@ -483,6 +488,11 @@ void GameScene::GamePlayStart() {
 		beamflag[i] = 0;
 		enemyflag[i] = 0;
 	}
+	if (gametimer > 1000)
+	{
+		gametimer = 0;
+	}
+	ingametimer = 0;
 	gamescore = 0;
 	playerlife = 3;
 	worldtransformplayer.translation_.x = 0;
@@ -506,5 +516,24 @@ void GameScene::StageUpdate() {
 		    worldtransformstage[i].translation_);
 
 		worldtransformstage[i].TransferMatrix();
+	}
+}
+
+void GameScene::EnemyJunp() { 
+	for (int i = 0; i < 10; i++)
+	{
+		if (enemyflag[i] == 2)
+		{
+			worldtransformenemy[i].translation_.y += enemyjunpspeed[i];
+
+			enemyjunpspeed[i] -= 0.1f;
+
+			worldtransformenemy[i].translation_.x += enemyspeed[i] * 4;
+
+			if (worldtransformenemy[i].translation_.y < -3)
+			{
+				enemyflag[i] = 0;
+			}
+		}
 	}
 }

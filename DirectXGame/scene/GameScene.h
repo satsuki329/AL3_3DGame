@@ -81,6 +81,9 @@ public: // メンバ関数
 
 	void StageUpdate();
 
+	void EnemyJunp();
+
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -109,6 +112,7 @@ private: // メンバ変数
 	WorldTransform worldtransformenemy[10];
 	int enemyflag[10] = {};
 	float enemyspeed[10] = {};
+	float enemyjunpspeed[10] = {};
 
 	DebugText* debugtext = nullptr;
 	int gamescore = 0;
@@ -123,6 +127,7 @@ private: // メンバ変数
 	Sprite* spriteenter = nullptr;
 
 	int gametimer = 0;
+	int ingametimer = 0;
 
 	uint32_t texturehandlegameover = 0;
 	Sprite* spritegameover = nullptr;

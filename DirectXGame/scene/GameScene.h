@@ -100,13 +100,14 @@ private: // メンバ変数
 
 	uint32_t texturehandlebeam = 0;
 	Model* modelbeam = nullptr;
-	WorldTransform worldtransformbeam;
-	int beamflag = 0;
+	WorldTransform worldtransformbeam[10];
+	int beamflag[10] = {};
 
 	uint32_t texturehandleenemy = 0;
 	Model* modelenemy = nullptr;
-	WorldTransform worldtransformenemy;
-	int enemyflag = 0;
+	WorldTransform worldtransformenemy[10];
+	int enemyflag[10] = {};
+	float enemyspeed[10] = {};
 
 	DebugText* debugtext = nullptr;
 	int gamescore = 0;
@@ -124,6 +125,8 @@ private: // メンバ変数
 
 	uint32_t texturehandlegameover = 0;
 	Sprite* spritegameover = nullptr;
+
+	int beamtimer = 1;
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

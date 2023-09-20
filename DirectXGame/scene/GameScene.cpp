@@ -78,6 +78,14 @@ void GameScene::Initialize() {
 
 	texturehandlegameover = TextureManager::Load("gameover.png");
 	spritegameover = Sprite::Create(texturehandlegameover, {0, 0});
+
+	titlebgm = audio_->LoadWave("Ring05.wav");
+	gamebgm = audio_->LoadWave("Ring08.wav");
+	gameoverbgm = audio_->LoadWave("Ring09.wav");
+	enemyhitse = audio_->LoadWave("chord.wav");
+	playerhitse = audio_->LoadWave("tada.wav");
+
+	voicehandlebgm = audio_->PlayWave(titlebgm, true);
 }
 
 void GameScene::Update() { 
@@ -343,7 +351,7 @@ void GameScene::EnemyBorn() {
 			int x = rand() % 80;
 			float x2 = (float)x / 10 - 4;
 
-			if (rand() % 100 == 0)
+			if (rand() % 10 == 0)
 			{
 				if (rand() % 2 == 0)
 				{
@@ -379,8 +387,13 @@ void GameScene::CollisionPlayerEnemy() {
 			if (dx < 1 && dz < 1) {
 				enemyflag[i] = 0;
 				playerlife -= 1;
+
+				audio_->PlayWave(playerhitse);
+
 				if (playerlife == 0) {
 					sceneMode = 2;
+					audio_->StopWave(voicehandlebgm);
+					voicehandlebgm = audio_->PlayWave(gameoverbgm, true);
 				}
 			}
 		}
@@ -399,6 +412,8 @@ void GameScene::CollisionBeamEnemy() {
 				    worldtransformbeam[j].translation_.z - worldtransformenemy[i].translation_.z);
 
 				if (dx < 1 && dz < 1) {
+					audio_->PlayWave(enemyhitse);
+
 					enemyflag[i] = 0;
 					beamflag[j] = 0;
 					gamescore += 1;
@@ -415,6 +430,8 @@ void GameScene::TitleUpdate() {
 	if (input_->TriggerKey(DIK_RETURN))
 	{
 		sceneMode = 0;
+		audio_->StopWave(voicehandlebgm);
+		voicehandlebgm = audio_->PlayWave(gamebgm, true);
 	}
 
 }
@@ -431,8 +448,11 @@ void GameScene::TitleDraw2DNear() {
 
 void GameScene::GameOverUpdate() {
 
-	if (input_->TriggerKey(DIK_RETURN)) {
+	if (input_->TriggerKey(DIK_RETURN)) 
+	{
 		sceneMode = 1;
+		audio_->StopWave(voicehandlebgm);
+		voicehandlebgm = audio_->PlayWave(titlebgm, true);
 	}
 }
 

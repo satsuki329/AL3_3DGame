@@ -126,7 +126,15 @@ private: // メンバ変数
 	uint32_t texturehandlegameover = 0;
 	Sprite* spritegameover = nullptr;
 
-	int beamtimer = 1;
+	int beamtimer = 1; 
+
+	uint32_t titlebgm = 0;
+	uint32_t gamebgm = 0;
+	uint32_t gameoverbgm = 0;
+	uint32_t enemyhitse = 0;
+	uint32_t playerhitse = 0;
+	uint32_t voicehandlebgm = 0;
+
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

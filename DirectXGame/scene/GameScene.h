@@ -79,6 +79,7 @@ public: // メンバ関数
 
 	void GamePlayStart();
 
+	void StageUpdate();
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -91,8 +92,8 @@ private: // メンバ変数
 	ViewProjection viewprojection;
 
 	uint32_t texturehandlestage = 0;
-	Model* modelstage = nullptr;
-	WorldTransform worldtransformstage;
+	Model* modelstage = 0;
+	WorldTransform worldtransformstage[20];
 
 	uint32_t texturehandleplayer = 0;
 	Model* modelplayer = nullptr;

@@ -28,22 +28,29 @@ void GameScene::Initialize() {
 
 	viewprojection.Initialize();
 
-	texturehandlestage = TextureManager::Load("stage.jpg");
+	texturehandlestage = TextureManager::Load("stage2.jpg");
 	modelstage = Model::Create();
-	worldtransformstage.Initialize();
+
+	for (int i = 0; i < 20; i++)
+	{
+		worldtransformstage[i].Initialize();
+	}
 
 	viewprojection.translation_.y = 1;
 	viewprojection.translation_.z = -6;
 	viewprojection.Initialize();
 
-	worldtransformstage.translation_ = {0, -1.5f, 0};
-	worldtransformstage.scale_ = {4.5f, 1, 40};
+	for (int i = 0; i < 20; i++)
+	{
+		worldtransformstage[i].translation_ = {0, -1.5f, 2.0f * i - 5};
+		worldtransformstage[i].scale_ = {4.5f, 1, 1};
 
-	worldtransformstage.matWorld_ = MakeAffineMatrix(
-	    worldtransformstage.scale_, worldtransformstage.rotation_,
-	    worldtransformstage.translation_);
+		worldtransformstage[i].matWorld_ = MakeAffineMatrix(
+		    worldtransformstage[i].scale_, worldtransformstage[i].rotation_,
+		    worldtransformstage[i].translation_);
 
-	worldtransformstage.TransferMatrix();
+		worldtransformstage[i].TransferMatrix();
+	}
 
 	texturehandleplayer = TextureManager::Load("player.png");
 	modelplayer = Model::Create();
@@ -115,6 +122,7 @@ void GameScene::GamePlayUpdate() {
 	BeamUpdate();
 	EnemyUpdate();
 	Collision();
+	StageUpdate();
 }
 
 void GameScene::Draw() {
@@ -201,7 +209,10 @@ void GameScene::Draw() {
 }
 
 void GameScene::GamePlayDraw3D() {
-	modelstage->Draw(worldtransformstage, viewprojection, texturehandlestage);
+	for (int i = 0; i < 20; i++)
+	{
+		modelstage->Draw(worldtransformstage[i], viewprojection, texturehandlestage);
+	}
 
 	modelplayer->Draw(worldtransformplayer, viewprojection, texturehandleplayer);
 
@@ -476,4 +487,24 @@ void GameScene::GamePlayStart() {
 	playerlife = 3;
 	worldtransformplayer.translation_.x = 0;
 	PlayerUpdate();
+}
+
+void GameScene::StageUpdate() {
+
+	for (int i = 0; i < 20; i++)
+	{
+		worldtransformstage[i].translation_.z -= 0.1f;
+
+		if (worldtransformstage[i].translation_.z < -5)
+		{
+			worldtransformstage[i].translation_.z += 40;
+		}
+
+		worldtransformstage[i].matWorld_ = MakeAffineMatrix(
+		    worldtransformstage[i].scale_,
+			worldtransformstage[i].rotation_,
+		    worldtransformstage[i].translation_);
+
+		worldtransformstage[i].TransferMatrix();
+	}
 }

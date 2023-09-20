@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Audio.h"
+#include "DebugText.h"
 #include "DirectXCommon.h"
 #include "Input.h"
 #include "Model.h"
@@ -40,11 +41,57 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
+	void PlayerUpdate();
+
+	void BeamUpdate();
+
+	void BeamMoob();
+
+	void BeamBorn();
+
+	void EnemyUpdate();
+
+	void EnemyMove();
+
+	void EnemyBorn();
+
+	void Collision();
+
+	void CollisionPlayerEnemy();
+
+	void CollisionBeamEnemy();
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
 
+	uint32_t texturehandleBG = 0;
+	Sprite* spriteBG = nullptr;
+
+	ViewProjection viewprojection;
+
+	uint32_t texturehandlestage = 0;
+	Model* modelstage = nullptr;
+	WorldTransform worldtransformstage;
+
+	uint32_t texturehandleplayer = 0;
+	Model* modelplayer = nullptr;
+	WorldTransform worldtransformplayer;
+
+	uint32_t texturehandlebeam = 0;
+	Model* modelbeam = nullptr;
+	WorldTransform worldtransformbeam;
+	int beamflag = 0;
+
+	uint32_t texturehandleenemy = 0;
+	Model* modelenemy = nullptr;
+	WorldTransform worldtransformenemy;
+	int enemyflag = 0;
+
+	DebugText* debugtext = nullptr;
+	int gamescore = 0;
+	int playerlife = 3;
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

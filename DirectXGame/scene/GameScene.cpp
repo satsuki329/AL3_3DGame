@@ -63,7 +63,11 @@ void GameScene::Initialize() {
 	debugtext->Initialize();
 }
 
-void GameScene::Update() {
+void GameScene::Update() { 
+	GamePlayUpdate();
+}
+
+void GameScene::GamePlayUpdate() {
 	PlayerUpdate();
 	BeamUpdate();
 	EnemyUpdate();
@@ -82,7 +86,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
-	spriteBG->Draw();
+
+	GamePlayDraw2DBack();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
@@ -97,17 +102,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-	modelstage->Draw(worldtransformstage, viewprojection, texturehandlestage);
 
-	modelplayer->Draw(worldtransformplayer, viewprojection, texturehandleplayer);
-
-	if (beamflag == 1) {
-		modelbeam->Draw(worldtransformbeam, viewprojection, texturehandlebeam);
-	}
-
-	if (enemyflag == 1) {
-		modelenemy->Draw(worldtransformenemy, viewprojection, texturehandleenemy);
-	}
+	GamePlayDraw3D();
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
@@ -120,6 +116,34 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
+	
+	GamePlayDraw2DNear();
+
+	// スプライト描画後処理
+	Sprite::PostDraw();
+
+#pragma endregion
+}
+
+void GameScene::GamePlayDraw3D() {
+	modelstage->Draw(worldtransformstage, viewprojection, texturehandlestage);
+
+	modelplayer->Draw(worldtransformplayer, viewprojection, texturehandleplayer);
+
+	if (beamflag == 1) {
+		modelbeam->Draw(worldtransformbeam, viewprojection, texturehandlebeam);
+	}
+
+	if (enemyflag == 1) {
+		modelenemy->Draw(worldtransformenemy, viewprojection, texturehandleenemy);
+	}
+}
+
+void GameScene::GamePlayDraw2DBack() {
+		spriteBG->Draw(); 
+}
+
+void GameScene::GamePlayDraw2DNear() {
 	char str[100];
 	sprintf_s(str, "SCORE %d", gamescore);
 	debugtext->Print(str, 200, 10, 2);
@@ -129,11 +153,6 @@ void GameScene::Draw() {
 	debugtext->Print(str2, 800, 10, 2);
 
 	debugtext->DrawAll();
-
-	// スプライト描画後処理
-	Sprite::PostDraw();
-
-#pragma endregion
 }
 
 void GameScene::PlayerUpdate() {

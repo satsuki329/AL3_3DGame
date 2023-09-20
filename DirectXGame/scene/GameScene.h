@@ -61,6 +61,16 @@ public: // メンバ関数
 
 	void CollisionBeamEnemy();
 
+	void GamePlayUpdate();
+
+	void GamePlayDraw3D();
+
+	void GamePlayDraw2DBack();
+
+	void GamePlayDraw2DNear();
+
+
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;

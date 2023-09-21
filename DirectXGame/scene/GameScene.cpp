@@ -15,10 +15,10 @@ GameScene::~GameScene() {
 	delete spriteTitle;
 	delete spriteenter;
 	delete spritegameover;
-	for (int i = 0; i < 5; i++)
-	{
+	for (int i = 0; i < 5; i++) {
 		delete spritenumber[i];
 	}
+	delete spritescore;
 }
 
 void GameScene::Initialize() {
@@ -35,8 +35,7 @@ void GameScene::Initialize() {
 	texturehandlestage = TextureManager::Load("stage2.jpg");
 	modelstage = Model::Create();
 
-	for (int i = 0; i < 20; i++)
-	{
+	for (int i = 0; i < 20; i++) {
 		worldtransformstage[i].Initialize();
 	}
 
@@ -44,8 +43,7 @@ void GameScene::Initialize() {
 	viewprojection.translation_.z = -6;
 	viewprojection.Initialize();
 
-	for (int i = 0; i < 20; i++)
-	{
+	for (int i = 0; i < 20; i++) {
 		worldtransformstage[i].translation_ = {0, -1.5f, 2.0f * i - 5};
 		worldtransformstage[i].scale_ = {4.5f, 1, 1};
 
@@ -70,8 +68,7 @@ void GameScene::Initialize() {
 
 	texturehandleenemy = TextureManager::Load("enemy.png");
 	modelenemy = Model::Create();
-	for (int i = 0; i < 10; i++)
-	{
+	for (int i = 0; i < 10; i++) {
 		worldtransformenemy[i].scale_ = {0.5f, 0.5f, 0.5f};
 		worldtransformenemy[i].Initialize();
 	}
@@ -99,21 +96,21 @@ void GameScene::Initialize() {
 	voicehandlebgm = audio_->PlayWave(titlebgm, true);
 
 	texturehandlenumber = TextureManager::Load("number.png");
-	for (int i = 0; i < 5; i++)
-	{
+	for (int i = 0; i < 5; i++) {
 		spritenumber[i] = Sprite::Create(texturehandlenumber, {300.0f + i * 26, 0});
 	}
-
+	texturehandlescore = TextureManager::Load("score.png");
+	spritescore = Sprite::Create(texturehandlescore, {150, 0});
 }
 
-void GameScene::Update() { 
-	switch (sceneMode)
-	{ case 0:
+void GameScene::Update() {
+	switch (sceneMode) {
+	case 0:
 		GamePlayUpdate();
-		
+
 		break;
 
-		case 1:
+	case 1:
 		TitleUpdate();
 		GamePlayStart();
 
@@ -125,7 +122,6 @@ void GameScene::Update() {
 		gametimer += 1;
 		break;
 	}
-
 }
 
 void GameScene::GamePlayUpdate() {
@@ -149,7 +145,7 @@ void GameScene::Draw() {
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
 
-		switch (sceneMode) {
+	switch (sceneMode) {
 	case 0:
 		GamePlayDraw2DBack();
 
@@ -193,19 +189,19 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
-	
+
 	switch (sceneMode) {
 	case 0:
 		GamePlayDraw2DNear();
 
 		break;
 
-		case 1:
+	case 1:
 		TitleDraw2DNear();
 
 		break;
 
-		case 2:
+	case 2:
 		GamePlayDraw2DNear();
 
 		GameOverDraw2DNear();
@@ -220,8 +216,7 @@ void GameScene::Draw() {
 }
 
 void GameScene::GamePlayDraw3D() {
-	for (int i = 0; i < 20; i++)
-	{
+	for (int i = 0; i < 20; i++) {
 		modelstage->Draw(worldtransformstage[i], viewprojection, texturehandlestage);
 	}
 
@@ -232,23 +227,17 @@ void GameScene::GamePlayDraw3D() {
 			modelbeam->Draw(worldtransformbeam[i], viewprojection, texturehandlebeam);
 		}
 	}
-	
 
-	for (int i = 0; i < 10; i++)
-	{
+	for (int i = 0; i < 10; i++) {
 		if (enemyflag[i] != 0) {
 			modelenemy->Draw(worldtransformenemy[i], viewprojection, texturehandleenemy);
 		}
 	}
 }
 
-void GameScene::GamePlayDraw2DBack() {
-		spriteBG->Draw(); 
-}
+void GameScene::GamePlayDraw2DBack() { spriteBG->Draw(); }
 
-void GameScene::GamePlayDraw2DNear() { 
-	DrawScore(); 
-}
+void GameScene::GamePlayDraw2DNear() { DrawScore(); }
 
 void GameScene::PlayerUpdate() {
 	if (input_->PushKey(DIK_RIGHT)) {
@@ -310,10 +299,8 @@ void GameScene::BeamBorn() {
 			beamtimer = 100;
 
 			break;
-		} 
-		else
-		{
-			beamtimer --;
+		} else {
+			beamtimer--;
 			if (beamtimer < 0) {
 				beamtimer = 0;
 			}
@@ -326,8 +313,7 @@ void GameScene::EnemyUpdate() {
 	EnemyBorn();
 	EnemyJunp();
 
-	for (int i = 0; i < 10; i++)
-	{
+	for (int i = 0; i < 10; i++) {
 		worldtransformenemy[i].matWorld_ = MakeAffineMatrix(
 		    worldtransformenemy[i].scale_, worldtransformenemy[i].rotation_,
 		    worldtransformenemy[i].translation_);
@@ -336,22 +322,18 @@ void GameScene::EnemyUpdate() {
 	}
 }
 
-void GameScene::EnemyMove() { 
-	for (int i = 0; i < 10; i++)
-	{
+void GameScene::EnemyMove() {
+	for (int i = 0; i < 10; i++) {
 		if (enemyflag[i] == 1) {
 			worldtransformenemy[i].translation_.z -= 0.1f;
 			worldtransformenemy[i].translation_.z -= ingametimer / 1000.0f;
 			worldtransformenemy[i].rotation_.x -= 0.1f;
 			worldtransformenemy[i].translation_.x += enemyspeed[i];
-			if (worldtransformenemy[i].translation_.x > 4)
-			{
+			if (worldtransformenemy[i].translation_.x > 4) {
 				enemyspeed[i] = -enemyspeed[i];
-			} 
-			else if (worldtransformenemy[i].translation_.x < -4) 
-			{
+			} else if (worldtransformenemy[i].translation_.x < -4) {
 				enemyspeed[i] = -enemyspeed[i];
-			} 
+			}
 			if (worldtransformenemy[i].translation_.z < -5) {
 				enemyflag[i] = 0;
 			}
@@ -361,21 +343,16 @@ void GameScene::EnemyMove() {
 
 void GameScene::EnemyBorn() {
 
-	for (int i = 0; i < 10; i++)
-	{
+	for (int i = 0; i < 10; i++) {
 		if (enemyflag[i] == 0) {
 			int x = rand() % 80;
 			float x2 = (float)x / 10 - 4;
 			worldtransformenemy[i].translation_.y = 0;
 
-			if (rand() % 10 == 0)
-			{
-				if (rand() % 2 == 0)
-				{
+			if (rand() % 10 == 0) {
+				if (rand() % 2 == 0) {
 					enemyspeed[i] = 0.1f;
-				}
-				else
-				{
+				} else {
 					enemyspeed[i] = -0.1f;
 				}
 				enemyflag[i] = 1;
@@ -386,7 +363,6 @@ void GameScene::EnemyBorn() {
 		}
 	}
 }
-
 
 void GameScene::Collision() {
 	CollisionPlayerEnemy();
@@ -418,11 +394,10 @@ void GameScene::CollisionPlayerEnemy() {
 	}
 }
 
-void GameScene::CollisionBeamEnemy() { 
+void GameScene::CollisionBeamEnemy() {
 	for (int i = 0; i < 10; i++) {
 
-		for (int j = 0; j < 10; j++)
-		{
+		for (int j = 0; j < 10; j++) {
 			if (enemyflag[i] == 1 && beamflag[j] == 1) {
 				float dx = abs(
 				    worldtransformbeam[j].translation_.x - worldtransformenemy[i].translation_.x);
@@ -439,36 +414,30 @@ void GameScene::CollisionBeamEnemy() {
 				}
 			}
 		}
-		
 	}
-	
 }
 
 void GameScene::TitleUpdate() {
 
-	if (input_->TriggerKey(DIK_RETURN))
-	{
+	if (input_->TriggerKey(DIK_RETURN)) {
 		sceneMode = 0;
 		audio_->StopWave(voicehandlebgm);
 		voicehandlebgm = audio_->PlayWave(gamebgm, true);
 	}
-
 }
 
 void GameScene::TitleDraw2DNear() {
 
 	spriteTitle->Draw();
 
-	if (gametimer % 40 >= 20)
-	{
+	if (gametimer % 40 >= 20) {
 		spriteenter->Draw();
 	}
 }
 
 void GameScene::GameOverUpdate() {
 
-	if (input_->TriggerKey(DIK_RETURN)) 
-	{
+	if (input_->TriggerKey(DIK_RETURN)) {
 		sceneMode = 1;
 		audio_->StopWave(voicehandlebgm);
 		voicehandlebgm = audio_->PlayWave(titlebgm, true);
@@ -477,7 +446,7 @@ void GameScene::GameOverUpdate() {
 
 void GameScene::GameOverDraw2DNear() {
 
-	spritegameover->Draw(); 
+	spritegameover->Draw();
 
 	if (gametimer % 40 >= 20) {
 		spriteenter->Draw();
@@ -486,13 +455,11 @@ void GameScene::GameOverDraw2DNear() {
 
 void GameScene::GamePlayStart() {
 
-	for (int i = 0; i < 10; i++)
-	{
+	for (int i = 0; i < 10; i++) {
 		beamflag[i] = 0;
 		enemyflag[i] = 0;
 	}
-	if (gametimer > 1000)
-	{
+	if (gametimer > 1000) {
 		gametimer = 0;
 	}
 	ingametimer = 0;
@@ -504,48 +471,54 @@ void GameScene::GamePlayStart() {
 
 void GameScene::StageUpdate() {
 
-	for (int i = 0; i < 20; i++)
-	{
+	for (int i = 0; i < 20; i++) {
 		worldtransformstage[i].translation_.z -= 0.1f;
 
-		if (worldtransformstage[i].translation_.z < -5)
-		{
+		if (worldtransformstage[i].translation_.z < -5) {
 			worldtransformstage[i].translation_.z += 40;
 		}
 
 		worldtransformstage[i].matWorld_ = MakeAffineMatrix(
-		    worldtransformstage[i].scale_,
-			worldtransformstage[i].rotation_,
+		    worldtransformstage[i].scale_, worldtransformstage[i].rotation_,
 		    worldtransformstage[i].translation_);
 
 		worldtransformstage[i].TransferMatrix();
 	}
 }
 
-void GameScene::EnemyJunp() { 
-	for (int i = 0; i < 10; i++)
-	{
-		if (enemyflag[i] == 2)
-		{
+void GameScene::EnemyJunp() {
+	for (int i = 0; i < 10; i++) {
+		if (enemyflag[i] == 2) {
 			worldtransformenemy[i].translation_.y += enemyjunpspeed[i];
 
 			enemyjunpspeed[i] -= 0.1f;
 
 			worldtransformenemy[i].translation_.x += enemyspeed[i] * 4;
 
-			if (worldtransformenemy[i].translation_.y < -3)
-			{
+			if (worldtransformenemy[i].translation_.y < -3) {
 				enemyflag[i] = 0;
 			}
 		}
 	}
 }
 
-void GameScene::DrawScore() { 
-	for (int i = 0; i < 5; i++)
-	{
+void GameScene::DrawScore() {
+
+	int eachnumber[5] = {};
+	int number = gamescore;
+
+	spritescore->Draw();
+
+	int keta = 10000;
+	for (int i = 0; i < 5; i++) {
+		eachnumber[i] = number / keta;
+		number = number % keta;
+		keta = keta / 10;
+	}
+
+	for (int i = 0; i < 5; i++) {
 		spritenumber[i]->SetSize({32, 64});
-		spritenumber[i]->SetTextureRect({0, 0}, {32, 64});
+		spritenumber[i]->SetTextureRect({32.0f * eachnumber[i], 0}, {32, 64});
 		spritenumber[i]->Draw();
 	}
 }

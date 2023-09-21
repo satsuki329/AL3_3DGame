@@ -145,6 +145,9 @@ private: // メンバ変数
 	uint32_t texturehandlenumber = 0;
 	Sprite* spritenumber[5] = {};
 
+	uint32_t texturehandlescore;
+	Sprite* spritescore = nullptr;
+
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

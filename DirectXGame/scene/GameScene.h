@@ -55,6 +55,18 @@ public: // メンバ関数
 
 	void TuranukiMove();
 
+	void SpTuranukiUpdate();
+
+	void SpTuranukiBorn();
+
+	void SpTuranukiMove();
+
+	void UltUpdate();
+
+	void UltBorn();
+
+	void UltMove();
+
 	void EnemyUpdate();
 
 	void EnemyMove();
@@ -68,6 +80,10 @@ public: // メンバ関数
 	void CollisionBeamEnemy();
 
 	void CollisionTuranukiEnemy();
+
+	void CollisionSpTuranukiEnemy();
+
+	void CollisionUltEnemy();
 
 	void GamePlayUpdate();
 
@@ -123,7 +139,17 @@ private: // メンバ変数
 	int turanukitimer = 0;
 	int turanukiflag = 0;
 
+	uint32_t texturehandlespturanuki = 0;
+	Model* modelspturanuki = nullptr;
+	WorldTransform worldtransformspturanuki[5];
+	int spturanukitimer = 0;
+	int spturanukiflag[5] = {};
+
+	uint32_t texturehandleult = 0;
+	Model* modelult = nullptr;
+	WorldTransform worldtransformult;
 	int ulttimer = 0;
+	int ultflag = 0;
 
 	uint32_t texturehandleenemy = 0;
 	Model* modelenemy = nullptr;

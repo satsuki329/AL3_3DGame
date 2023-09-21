@@ -20,6 +20,8 @@ GameScene::~GameScene() {
 	}
 	delete spritescore;
 	delete modelturanuki;
+	delete modelult;
+	delete modelspturanuki;
 }
 
 void GameScene::Initialize() {
@@ -71,6 +73,17 @@ void GameScene::Initialize() {
 	modelturanuki = Model::Create();
 	worldtransformturanuki.Initialize();
 
+	texturehandlespturanuki = TextureManager::Load("chest2.png");
+	modelspturanuki = Model::Create();
+	for (int i = 0; i < 5; i++) {
+		worldtransformspturanuki[i].Initialize();
+	}
+	worldtransformspturanuki->Initialize();
+
+	texturehandleult = TextureManager::Load("chest2.png");
+	modelult = Model::Create();
+	worldtransformult.Initialize();
+
 	texturehandleenemy = TextureManager::Load("enemy.png");
 	modelenemy = Model::Create();
 	for (int i = 0; i < 10; i++) {
@@ -110,7 +123,10 @@ void GameScene::Initialize() {
 
 	for (int i = 0; i < 3; i++) {
 		spritelife[i] = Sprite::Create(texturehandleplayer, {800.0f + i * 60, 10});
-		spritelife[i]->SetSize({ 40, 40,});
+		spritelife[i]->SetSize({
+		    40,
+		    40,
+		});
 	}
 }
 
@@ -142,6 +158,8 @@ void GameScene::GamePlayUpdate() {
 	Collision();
 	StageUpdate();
 	TuranukiUpdate();
+	SpTuranukiUpdate();
+	// UltUpdate();
 }
 
 void GameScene::Draw() {
@@ -232,14 +250,23 @@ void GameScene::GamePlayDraw3D() {
 		modelstage->Draw(worldtransformstage[i], viewprojection, texturehandlestage);
 	}
 
-	if (playertimer % 4 < 2)
-	{
+	if (playertimer % 4 < 2) {
 		modelplayer->Draw(worldtransformplayer, viewprojection, texturehandleplayer);
 	}
 
-	if (turanukiflag == 1)
-	{
+	if (turanukiflag == 1) {
 		modelturanuki->Draw(worldtransformturanuki, viewprojection, texturehandleturanuki);
+	}
+
+	for (int i = 0; i < 5; i++) {
+		if (spturanukiflag[i] == 1) {
+			modelspturanuki->Draw(
+			    worldtransformspturanuki[i], viewprojection, texturehandlespturanuki);
+		}
+	}
+
+	if (ultflag == 1) {
+		modelult->Draw(worldtransformult, viewprojection, texturehandleult);
 	}
 
 	for (int i = 0; i < 10; i++) {
@@ -276,16 +303,14 @@ void GameScene::PlayerUpdate() {
 
 	if (input_->PushKey(DIK_UP)) {
 		worldtransformplayer.translation_.y += 0.1f;
-		if (worldtransformplayer.translation_.y > 2.84f) 
-		{
+		if (worldtransformplayer.translation_.y > 2.84f) {
 			worldtransformplayer.translation_.y = 2.8f;
 		}
 	}
 
 	if (input_->PushKey(DIK_DOWN)) {
 		worldtransformplayer.translation_.y -= 0.1f;
-		if (worldtransformplayer.translation_.y < 0) 
-		{
+		if (worldtransformplayer.translation_.y < 0) {
 			worldtransformplayer.translation_.y = 0;
 		}
 	}
@@ -296,8 +321,7 @@ void GameScene::PlayerUpdate() {
 
 	worldtransformplayer.TransferMatrix();
 
-	if (playertimer > 0)
-	{
+	if (playertimer > 0) {
 		playertimer--;
 	}
 }
@@ -349,7 +373,7 @@ void GameScene::BeamBorn() {
 	}
 }
 
-void GameScene::TuranukiUpdate() { 
+void GameScene::TuranukiUpdate() {
 	TuranukiBorn();
 	TuranukiMove();
 
@@ -362,9 +386,7 @@ void GameScene::TuranukiUpdate() {
 
 void GameScene::TuranukiBorn() {
 
-
-	if (input_->PushKey(DIK_V) && turanukitimer == 0)
-	{
+	if (input_->PushKey(DIK_V) && turanukitimer == 0) {
 		turanukitimer = 350;
 		turanukiflag = 1;
 		worldtransformturanuki.translation_.x = worldtransformplayer.translation_.x;
@@ -372,20 +394,115 @@ void GameScene::TuranukiBorn() {
 		worldtransformturanuki.translation_.z = worldtransformplayer.translation_.z;
 	}
 
-	if (turanukitimer > 0)
-	{
+	if (turanukitimer > 0) {
 		turanukitimer--;
 	}
 }
 
 void GameScene::TuranukiMove() {
 
-	if (turanukiflag == 1)
-	{
-		worldtransformturanuki.translation_.z += 0.1f;
-		if (worldtransformturanuki.translation_.z > 40)
-		{
+	if (turanukiflag == 1) {
+		worldtransformturanuki.translation_.z += 0.3f;
+		if (worldtransformturanuki.translation_.z > 40) {
 			turanukiflag = 0;
+		}
+	}
+}
+
+void GameScene::SpTuranukiUpdate() {
+
+	SpTuranukiBorn();
+	SpTuranukiMove();
+
+	for (int i = 0; i < 5; i++)
+	{
+		worldtransformspturanuki[i].matWorld_ = MakeAffineMatrix(
+		    worldtransformspturanuki[i].scale_, worldtransformspturanuki[i].rotation_,
+		    worldtransformspturanuki[i].translation_);
+
+		worldtransformspturanuki[i].TransferMatrix();
+	}
+
+}
+
+void GameScene::SpTuranukiBorn() {
+
+	if (input_->PushKey(DIK_B) && spturanukitimer == 0)
+	{
+		spturanukitimer = 1300;
+		for (int i = 0; i < 5; i++)
+		{
+			if (i < 3)
+			{
+				spturanukiflag[i] = 1;
+				worldtransformspturanuki[i].translation_.x =
+				    worldtransformplayer.translation_.x + i * 2;
+				worldtransformspturanuki[i].translation_.y = worldtransformplayer.translation_.y;
+				worldtransformspturanuki[i].translation_.z = worldtransformplayer.translation_.z;
+			}
+			else
+			{
+				spturanukiflag[i] = 1;
+				worldtransformspturanuki[i].translation_.x =
+				    worldtransformplayer.translation_.x - (i - 2) * 2;
+				worldtransformspturanuki[i].translation_.y = worldtransformplayer.translation_.y;
+				worldtransformspturanuki[i].translation_.z = worldtransformplayer.translation_.z;
+			}
+		}
+	}
+
+	if (spturanukitimer > 0)
+	{
+		spturanukitimer--;
+	}
+
+}
+
+void GameScene::SpTuranukiMove() {
+
+	for (int i = 0; i < 5; i++)
+	{
+		if (spturanukiflag[i] == 1) {
+			worldtransformspturanuki[i].translation_.z += 0.3f;
+			if (worldtransformspturanuki[i].translation_.z > 40) {
+				spturanukiflag[i] = 0;
+			}
+		}
+	}
+
+}
+
+void GameScene::UltUpdate() {
+	UltBorn();
+	UltMove();
+
+	worldtransformult.matWorld_ = MakeAffineMatrix(
+	    worldtransformult.scale_, worldtransformult.rotation_, worldtransformult.translation_);
+
+	worldtransformult.TransferMatrix();
+}
+
+void GameScene::UltBorn() {
+
+	if (input_->PushKey(DIK_N) && ulttimer == 0) {
+		ulttimer = 1000;
+		ultflag = 1;
+		worldtransformult.translation_.x = worldtransformplayer.translation_.x;
+		worldtransformult.translation_.y = worldtransformplayer.translation_.y;
+		worldtransformult.translation_.z = worldtransformplayer.translation_.z;
+	}
+
+	if (ulttimer > 0) {
+		ulttimer--;
+	}
+}
+
+void GameScene::UltMove() {
+
+	if (ultflag == 1) {
+		worldtransformult.translation_.z += 0.2f;
+		if (worldtransformult.translation_.z > 40) {
+			ultflag = 0;
 		}
 	}
 }
@@ -417,12 +534,9 @@ void GameScene::EnemyMove() {
 			} else if (worldtransformenemy[i].translation_.x < -4) {
 				enemyspeed[i] = -enemyspeed[i];
 			}
-			if (worldtransformenemy[i].translation_.y < 0)
-			{
+			if (worldtransformenemy[i].translation_.y < 0) {
 				enemyspeedy[i] = -enemyspeedy[i];
-			}
-			else if (worldtransformenemy[i].translation_.y > 2.8f)
-			{
+			} else if (worldtransformenemy[i].translation_.y > 2.8f) {
 				enemyspeedy[i] = -enemyspeedy[i];
 			}
 			if (worldtransformenemy[i].translation_.z < -5) {
@@ -460,11 +574,12 @@ void GameScene::Collision() {
 	CollisionPlayerEnemy();
 	CollisionBeamEnemy();
 	CollisionTuranukiEnemy();
+	CollisionSpTuranukiEnemy();
+	// CollisionUltEnemy();
 }
 
 void GameScene::CollisionPlayerEnemy() {
-	if (playertimer == 0)
-	{
+	if (playertimer == 0) {
 		for (int i = 0; i < 10; i++) {
 			if (enemyflag[i] == 1) {
 				float dx = abs(
@@ -489,7 +604,7 @@ void GameScene::CollisionPlayerEnemy() {
 					}
 				}
 			}
-		}      
+		}
 	}
 }
 
@@ -534,6 +649,71 @@ void GameScene::CollisionTuranukiEnemy() {
 				enemyjunpspeed[i] = 1;
 				enemyflag[i] = 2;
 				gamescore += 1;
+			}
+		}
+	}
+}
+
+void GameScene::CollisionSpTuranukiEnemy() {
+
+	for (int i = 0; i < 10; i++) 
+	{
+		for (int j = 0; j < 5; j++)
+		{
+			if (enemyflag[i] == 1 && spturanukiflag[j] == 1) {
+				float dx = abs(worldtransformenemy[i].translation_.x -
+				        worldtransformspturanuki[j].translation_.x);
+				float dy = abs(worldtransformenemy[i].translation_.y -
+				        worldtransformspturanuki[j].translation_.y);
+				float dz = abs(worldtransformenemy[i].translation_.z -
+				        worldtransformspturanuki[j].translation_.z);
+
+				if (dx < 1 && dy < 1 && dz < 1) {
+					audio_->PlayWave(enemyhitse);
+
+					enemyjunpspeed[i] = 1;
+					enemyflag[i] = 2;
+					gamescore += 1;
+				}
+			}
+		}
+	}
+	
+
+}
+
+void GameScene::CollisionUltEnemy() {
+
+	for (int i = 0; i < 10; i++) {
+		if (enemyflag[i] == 1 && ultflag == 1) {
+			float dx =
+			    abs(worldtransformenemy[i].translation_.x - worldtransformult.translation_.x);
+			float dy =
+			    abs(worldtransformenemy[i].translation_.y - worldtransformult.translation_.y);
+			float dz =
+			    abs(worldtransformenemy[i].translation_.z - worldtransformult.translation_.z);
+
+			if (dx < 1 && dy < 1 && dz < 1) {
+				audio_->PlayWave(enemyhitse);
+
+				enemyjunpspeed[i] = 1;
+				enemyflag[i] = 3;
+				gamescore += 1;
+			}
+		}
+
+		if (enemyflag[i] == 3) {
+			for (int j = 0; j < 10; j++) {
+				float dx = abs(
+				    worldtransformenemy[i].translation_.x - worldtransformenemy[j].translation_.x);
+				float dy = abs(
+				    worldtransformenemy[i].translation_.y - worldtransformenemy[j].translation_.y);
+				float dz = abs(
+				    worldtransformenemy[i].translation_.z - worldtransformenemy[i].translation_.z);
+
+				if (dx < 1.5f && dy < 1.5f && dz < 1.5f) {
+					enemyflag[j] = 3;
+				}
 			}
 		}
 	}
@@ -584,13 +764,20 @@ void GameScene::GamePlayStart() {
 	if (gametimer > 1000) {
 		gametimer = 0;
 	}
+
+	for (int i = 0; i < 5; i++)
+	{
+		spturanukiflag[i] = 0;
+	}
 	ingametimer = 0;
 	gamescore = 0;
 	playerlife = 3;
 	playertimer = 0;
 	turanukitimer = 350;
 	turanukiflag = 0;
-	ulttimer = 3000;
+	spturanukitimer = 0;
+	ulttimer = 1500;
+	ultflag = 0;
 	worldtransformplayer.translation_.x = 0;
 	PlayerUpdate();
 }
@@ -614,7 +801,7 @@ void GameScene::StageUpdate() {
 
 void GameScene::EnemyJunp() {
 	for (int i = 0; i < 10; i++) {
-		if (enemyflag[i] == 2) {
+		if (enemyflag[i] == 2 || enemyflag[i] == 3) {
 			worldtransformenemy[i].translation_.y += enemyjunpspeed[i];
 
 			enemyjunpspeed[i] -= 0.1f;

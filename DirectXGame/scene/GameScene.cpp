@@ -19,6 +19,7 @@ GameScene::~GameScene() {
 		delete spritenumber[i];
 	}
 	delete spritescore;
+	delete modelturanuki;
 }
 
 void GameScene::Initialize() {
@@ -65,6 +66,10 @@ void GameScene::Initialize() {
 		worldtransformbeam[i].scale_ = {0.3f, 0.3f, 0.3f};
 		worldtransformbeam[i].Initialize();
 	}
+
+	texturehandleturanuki = TextureManager::Load("bed.png");
+	modelturanuki = Model::Create();
+	worldtransformturanuki.Initialize();
 
 	texturehandleenemy = TextureManager::Load("enemy.png");
 	modelenemy = Model::Create();
@@ -136,6 +141,7 @@ void GameScene::GamePlayUpdate() {
 	EnemyUpdate();
 	Collision();
 	StageUpdate();
+	TuranukiUpdate();
 }
 
 void GameScene::Draw() {
@@ -231,6 +237,11 @@ void GameScene::GamePlayDraw3D() {
 		modelplayer->Draw(worldtransformplayer, viewprojection, texturehandleplayer);
 	}
 
+	if (turanukiflag == 1)
+	{
+		modelturanuki->Draw(worldtransformturanuki, viewprojection, texturehandleturanuki);
+	}
+
 	for (int i = 0; i < 10; i++) {
 		if (beamflag[i] == 1) {
 			modelbeam->Draw(worldtransformbeam[i], viewprojection, texturehandlebeam);
@@ -260,6 +271,22 @@ void GameScene::PlayerUpdate() {
 		worldtransformplayer.translation_.x -= 0.1f;
 		if (worldtransformplayer.translation_.x < -4.0f) {
 			worldtransformplayer.translation_.x = -4.0f;
+		}
+	}
+
+	if (input_->PushKey(DIK_UP)) {
+		worldtransformplayer.translation_.y += 0.1f;
+		if (worldtransformplayer.translation_.y > 2.84f) 
+		{
+			worldtransformplayer.translation_.y = 2.8f;
+		}
+	}
+
+	if (input_->PushKey(DIK_DOWN)) {
+		worldtransformplayer.translation_.y -= 0.1f;
+		if (worldtransformplayer.translation_.y < 0) 
+		{
+			worldtransformplayer.translation_.y = 0;
 		}
 	}
 
@@ -322,6 +349,47 @@ void GameScene::BeamBorn() {
 	}
 }
 
+void GameScene::TuranukiUpdate() { 
+	TuranukiBorn();
+	TuranukiMove();
+
+	worldtransformturanuki.matWorld_ = MakeAffineMatrix(
+	    worldtransformturanuki.scale_, worldtransformturanuki.rotation_,
+	    worldtransformturanuki.translation_);
+
+	worldtransformturanuki.TransferMatrix();
+}
+
+void GameScene::TuranukiBorn() {
+
+
+	if (input_->PushKey(DIK_V) && turanukitimer == 0)
+	{
+		turanukitimer = 350;
+		turanukiflag = 1;
+		worldtransformturanuki.translation_.x = worldtransformplayer.translation_.x;
+		worldtransformturanuki.translation_.y = worldtransformplayer.translation_.y;
+		worldtransformturanuki.translation_.z = worldtransformplayer.translation_.z;
+	}
+
+	if (turanukitimer > 0)
+	{
+		turanukitimer--;
+	}
+}
+
+void GameScene::TuranukiMove() {
+
+	if (turanukiflag == 1)
+	{
+		worldtransformturanuki.translation_.z += 0.1f;
+		if (worldtransformturanuki.translation_.z > 40)
+		{
+			turanukiflag = 0;
+		}
+	}
+}
+
 void GameScene::EnemyUpdate() {
 	EnemyMove();
 	EnemyBorn();
@@ -343,10 +411,19 @@ void GameScene::EnemyMove() {
 			worldtransformenemy[i].translation_.z -= ingametimer / 1000.0f;
 			worldtransformenemy[i].rotation_.x -= 0.1f;
 			worldtransformenemy[i].translation_.x += enemyspeed[i];
+			worldtransformenemy[i].translation_.y += enemyspeedy[i];
 			if (worldtransformenemy[i].translation_.x > 4) {
 				enemyspeed[i] = -enemyspeed[i];
 			} else if (worldtransformenemy[i].translation_.x < -4) {
 				enemyspeed[i] = -enemyspeed[i];
+			}
+			if (worldtransformenemy[i].translation_.y < 0)
+			{
+				enemyspeedy[i] = -enemyspeedy[i];
+			}
+			else if (worldtransformenemy[i].translation_.y > 2.8f)
+			{
+				enemyspeedy[i] = -enemyspeedy[i];
 			}
 			if (worldtransformenemy[i].translation_.z < -5) {
 				enemyflag[i] = 0;
@@ -362,6 +439,7 @@ void GameScene::EnemyBorn() {
 			int x = rand() % 80;
 			float x2 = (float)x / 10 - 4;
 			worldtransformenemy[i].translation_.y = 0;
+			enemyspeedy[i] = 0.1f;
 
 			if (rand() % 10 == 0) {
 				if (rand() % 2 == 0) {
@@ -381,6 +459,7 @@ void GameScene::EnemyBorn() {
 void GameScene::Collision() {
 	CollisionPlayerEnemy();
 	CollisionBeamEnemy();
+	CollisionTuranukiEnemy();
 }
 
 void GameScene::CollisionPlayerEnemy() {
@@ -390,10 +469,12 @@ void GameScene::CollisionPlayerEnemy() {
 			if (enemyflag[i] == 1) {
 				float dx = abs(
 				    worldtransformplayer.translation_.x - worldtransformenemy[i].translation_.x);
+				float dy = abs(
+				    worldtransformplayer.translation_.y - worldtransformenemy[i].translation_.y);
 				float dz = abs(
 				    worldtransformplayer.translation_.z - worldtransformenemy[i].translation_.z);
 
-				if (dx < 1 && dz < 1) {
+				if (dx < 1 && dy < 1 && dz < 1) {
 					enemyflag[i] = 2;
 					playerlife -= 1;
 					enemyjunpspeed[i] = 1;
@@ -419,10 +500,12 @@ void GameScene::CollisionBeamEnemy() {
 			if (enemyflag[i] == 1 && beamflag[j] == 1) {
 				float dx = abs(
 				    worldtransformbeam[j].translation_.x - worldtransformenemy[i].translation_.x);
+				float dy = abs(
+				    worldtransformbeam[j].translation_.y - worldtransformenemy[i].translation_.y);
 				float dz = abs(
 				    worldtransformbeam[j].translation_.z - worldtransformenemy[i].translation_.z);
 
-				if (dx < 1 && dz < 1) {
+				if (dx < 1 && dy < 1 && dz < 1) {
 					audio_->PlayWave(enemyhitse);
 
 					enemyjunpspeed[i] = 1;
@@ -430,6 +513,27 @@ void GameScene::CollisionBeamEnemy() {
 					beamflag[j] = 0;
 					gamescore += 1;
 				}
+			}
+		}
+	}
+}
+
+void GameScene::CollisionTuranukiEnemy() {
+	for (int i = 0; i < 10; i++) {
+		if (enemyflag[i] == 1 && turanukiflag == 1) {
+			float dx =
+			    abs(worldtransformenemy[i].translation_.x - worldtransformturanuki.translation_.x);
+			float dy =
+			    abs(worldtransformenemy[i].translation_.y - worldtransformturanuki.translation_.y);
+			float dz =
+			    abs(worldtransformenemy[i].translation_.z - worldtransformturanuki.translation_.z);
+
+			if (dx < 1 && dy < 1 && dz < 1) {
+				audio_->PlayWave(enemyhitse);
+
+				enemyjunpspeed[i] = 1;
+				enemyflag[i] = 2;
+				gamescore += 1;
 			}
 		}
 	}
@@ -484,6 +588,9 @@ void GameScene::GamePlayStart() {
 	gamescore = 0;
 	playerlife = 3;
 	playertimer = 0;
+	turanukitimer = 350;
+	turanukiflag = 0;
+	ulttimer = 3000;
 	worldtransformplayer.translation_.x = 0;
 	PlayerUpdate();
 }

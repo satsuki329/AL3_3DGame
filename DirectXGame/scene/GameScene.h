@@ -49,6 +49,12 @@ public: // メンバ関数
 
 	void BeamBorn();
 
+	void TuranukiUpdate();
+
+	void TuranukiBorn();
+
+	void TuranukiMove();
+
 	void EnemyUpdate();
 
 	void EnemyMove();
@@ -60,6 +66,8 @@ public: // メンバ関数
 	void CollisionPlayerEnemy();
 
 	void CollisionBeamEnemy();
+
+	void CollisionTuranukiEnemy();
 
 	void GamePlayUpdate();
 
@@ -109,11 +117,20 @@ private: // メンバ変数
 	WorldTransform worldtransformbeam[10];
 	int beamflag[10] = {};
 
+	uint32_t texturehandleturanuki = 0;
+	Model* modelturanuki = nullptr;
+	WorldTransform worldtransformturanuki;
+	int turanukitimer = 0;
+	int turanukiflag = 0;
+
+	int ulttimer = 0;
+
 	uint32_t texturehandleenemy = 0;
 	Model* modelenemy = nullptr;
 	WorldTransform worldtransformenemy[10];
 	int enemyflag[10] = {};
 	float enemyspeed[10] = {};
+	float enemyspeedy[10] = {};
 	float enemyjunpspeed[10] = {};
 
 	DebugText* debugtext = nullptr;

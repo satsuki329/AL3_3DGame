@@ -83,6 +83,7 @@ public: // メンバ関数
 
 	void EnemyJunp();
 
+	void DrawScore();
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -140,6 +141,9 @@ private: // メンバ変数
 	uint32_t enemyhitse = 0;
 	uint32_t playerhitse = 0;
 	uint32_t voicehandlebgm = 0;
+
+	uint32_t texturehandlenumber = 0;
+	Sprite* spritenumber[5] = {};
 
 	/// <summary>
 	/// ゲームシーン用

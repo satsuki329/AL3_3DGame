@@ -15,6 +15,10 @@ GameScene::~GameScene() {
 	delete spriteTitle;
 	delete spriteenter;
 	delete spritegameover;
+	for (int i = 0; i < 5; i++)
+	{
+		delete spritenumber[i];
+	}
 }
 
 void GameScene::Initialize() {
@@ -93,6 +97,13 @@ void GameScene::Initialize() {
 	playerhitse = audio_->LoadWave("tada.wav");
 
 	voicehandlebgm = audio_->PlayWave(titlebgm, true);
+
+	texturehandlenumber = TextureManager::Load("number.png");
+	for (int i = 0; i < 5; i++)
+	{
+		spritenumber[i] = Sprite::Create(texturehandlenumber, {300.0f + i * 26, 0});
+	}
+
 }
 
 void GameScene::Update() { 
@@ -235,16 +246,8 @@ void GameScene::GamePlayDraw2DBack() {
 		spriteBG->Draw(); 
 }
 
-void GameScene::GamePlayDraw2DNear() {
-	char str[100];
-	sprintf_s(str, "SCORE %d", gamescore);
-	debugtext->Print(str, 200, 10, 2);
-
-	char str2[100];
-	sprintf_s(str2, "LIFE %d", playerlife);
-	debugtext->Print(str2, 800, 10, 2);
-
-	debugtext->DrawAll();
+void GameScene::GamePlayDraw2DNear() { 
+	DrawScore(); 
 }
 
 void GameScene::PlayerUpdate() {
@@ -535,5 +538,14 @@ void GameScene::EnemyJunp() {
 				enemyflag[i] = 0;
 			}
 		}
+	}
+}
+
+void GameScene::DrawScore() { 
+	for (int i = 0; i < 5; i++)
+	{
+		spritenumber[i]->SetSize({32, 64});
+		spritenumber[i]->SetTextureRect({0, 0}, {32, 64});
+		spritenumber[i]->Draw();
 	}
 }

@@ -102,6 +102,7 @@ private: // メンバ変数
 	uint32_t texturehandleplayer = 0;
 	Model* modelplayer = nullptr;
 	WorldTransform worldtransformplayer;
+	int playertimer = 0;
 
 	uint32_t texturehandlebeam = 0;
 	Model* modelbeam = nullptr;
@@ -147,6 +148,8 @@ private: // メンバ変数
 
 	uint32_t texturehandlescore;
 	Sprite* spritescore = nullptr;
+
+	Sprite* spritelife[3] = {};
 
 	/// <summary>
 	/// ゲームシーン用

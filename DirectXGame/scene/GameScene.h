@@ -97,6 +97,10 @@ public: // メンバ関数
 
 	void TitleDraw2DNear();
 
+	void RuleUpdate();
+
+	void RuleDraw2DNear();
+
 	void GameOverUpdate();
 
 	void GameOverDraw2DNear();
@@ -108,6 +112,8 @@ public: // メンバ関数
 	void EnemyJunp();
 
 	void DrawScore();
+
+	void DrawSkil();
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -136,12 +142,16 @@ private: // メンバ変数
 	uint32_t texturehandleturanuki = 0;
 	Model* modelturanuki = nullptr;
 	WorldTransform worldtransformturanuki;
+	uint32_t v = 0;
+	Sprite* modelv = nullptr;
 	int turanukitimer = 0;
 	int turanukiflag = 0;
 
 	uint32_t texturehandlespturanuki = 0;
 	Model* modelspturanuki = nullptr;
 	WorldTransform worldtransformspturanuki[5];
+	uint32_t b = 0;
+	Sprite* modelb = nullptr;
 	int spturanukitimer = 0;
 	int spturanukiflag[5] = {};
 
@@ -168,6 +178,9 @@ private: // メンバ変数
 	uint32_t texturehandleTitle = 0;
 	Sprite* spriteTitle = nullptr;
 
+	uint32_t texturehandlerule = 0;
+	Sprite* spriterule = nullptr;
+
 	uint32_t enter = 0;
 	Sprite* spriteenter = nullptr;
 
@@ -189,7 +202,7 @@ private: // メンバ変数
 	uint32_t texturehandlenumber = 0;
 	Sprite* spritenumber[5] = {};
 
-	uint32_t texturehandlescore;
+	uint32_t texturehandlescore = 0;
 	Sprite* spritescore = nullptr;
 
 	Sprite* spritelife[3] = {};

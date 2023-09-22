@@ -13,6 +13,7 @@ GameScene::~GameScene() {
 	delete modelbeam;
 	delete modelenemy;
 	delete spriteTitle;
+	delete spriterule;
 	delete spriteenter;
 	delete spritegameover;
 	for (int i = 0; i < 5; i++) {
@@ -22,6 +23,8 @@ GameScene::~GameScene() {
 	delete modelturanuki;
 	delete modelult;
 	delete modelspturanuki;
+	delete modelv;
+	delete modelb;
 }
 
 void GameScene::Initialize() {
@@ -30,7 +33,7 @@ void GameScene::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 
-	texturehandleBG = TextureManager::Load("bg.jpg");
+	texturehandleBG = TextureManager::Load("bg.png");
 	spriteBG = Sprite::Create(texturehandleBG, {0, 0});
 
 	viewprojection.Initialize();
@@ -62,20 +65,26 @@ void GameScene::Initialize() {
 	worldtransformplayer.scale_ = {0.5f, 0.5f, 0.5f};
 	worldtransformplayer.Initialize();
 
-	texturehandlebeam = TextureManager::Load("beam.png");
+	texturehandlebeam = TextureManager::Load("plbullet.png");
 	modelbeam = Model::Create();
 	for (int i = 0; i < 10; i++) {
-		worldtransformbeam[i].scale_ = {0.3f, 0.3f, 0.3f};
+		worldtransformbeam[i].scale_ = {0.1f, 0.1f, 0.1f};
 		worldtransformbeam[i].Initialize();
 	}
 
-	texturehandleturanuki = TextureManager::Load("bed.png");
+	texturehandleturanuki = TextureManager::Load("turanuki.png");
 	modelturanuki = Model::Create();
+	v = TextureManager::Load("v.png");
+	modelv = Sprite::Create(v, {1000.0f, 0.0f});
+	worldtransformturanuki.scale_ = {0.2f, 0.2f, 0.2f};
 	worldtransformturanuki.Initialize();
 
-	texturehandlespturanuki = TextureManager::Load("chest2.png");
+	texturehandlespturanuki = TextureManager::Load("spturanuki.png");
 	modelspturanuki = Model::Create();
+	b = TextureManager::Load("b.png");
+	modelb = Sprite::Create(b, {1100.0f, 0.0f});
 	for (int i = 0; i < 5; i++) {
+		worldtransformspturanuki[i].scale_ = {0.3f, 0.3f, 0.3f};
 		worldtransformspturanuki[i].Initialize();
 	}
 	worldtransformspturanuki->Initialize();
@@ -87,7 +96,7 @@ void GameScene::Initialize() {
 	texturehandleenemy = TextureManager::Load("enemy.png");
 	modelenemy = Model::Create();
 	for (int i = 0; i < 10; i++) {
-		worldtransformenemy[i].scale_ = {0.5f, 0.5f, 0.5f};
+		worldtransformenemy[i].scale_ = {0.3f, 0.3f, 0.3f};
 		worldtransformenemy[i].Initialize();
 	}
 
@@ -96,8 +105,11 @@ void GameScene::Initialize() {
 	debugtext = DebugText::GetInstance();
 	debugtext->Initialize();
 
-	texturehandleTitle = TextureManager::Load("title.png");
+	texturehandleTitle = TextureManager::Load("title2.png");
 	spriteTitle = Sprite::Create(texturehandleTitle, {0, 0});
+
+	texturehandlerule = TextureManager::Load("rule.png");
+	spriterule = Sprite::Create(texturehandlerule, {0, 0});
 
 	enter = TextureManager::Load("enter.png");
 	spriteenter = Sprite::Create(enter, {420, 450});
@@ -147,6 +159,11 @@ void GameScene::Update() {
 	case 2:
 		GameOverUpdate();
 		gametimer += 1;
+		break;
+
+	case 3:
+		RuleUpdate();
+
 		break;
 	}
 }
@@ -237,6 +254,11 @@ void GameScene::Draw() {
 		GameOverDraw2DNear();
 
 		break;
+
+	case 3:
+		RuleDraw2DNear();
+
+		break;
 	}
 
 	// スプライト描画後処理
@@ -246,16 +268,16 @@ void GameScene::Draw() {
 }
 
 void GameScene::GamePlayDraw3D() {
-	for (int i = 0; i < 20; i++) {
-		modelstage->Draw(worldtransformstage[i], viewprojection, texturehandlestage);
+	// for (int i = 0; i < 20; i++) {
+	// modelstage->Draw(worldtransformstage[i], viewprojection, texturehandlestage);
+	//}
+
+	if (turanukiflag == 1) {
+		modelturanuki->Draw(worldtransformturanuki, viewprojection, texturehandleturanuki);
 	}
 
 	if (playertimer % 4 < 2) {
 		modelplayer->Draw(worldtransformplayer, viewprojection, texturehandleplayer);
-	}
-
-	if (turanukiflag == 1) {
-		modelturanuki->Draw(worldtransformturanuki, viewprojection, texturehandleturanuki);
 	}
 
 	for (int i = 0; i < 5; i++) {
@@ -284,9 +306,16 @@ void GameScene::GamePlayDraw3D() {
 
 void GameScene::GamePlayDraw2DBack() { spriteBG->Draw(); }
 
-void GameScene::GamePlayDraw2DNear() { DrawScore(); }
+void GameScene::GamePlayDraw2DNear() {
+	DrawScore();
+
+	DrawSkil();
+}
 
 void GameScene::PlayerUpdate() {
+
+	worldtransformplayer.rotation_.x += 10.0f;
+
 	if (input_->PushKey(DIK_RIGHT)) {
 		worldtransformplayer.translation_.x += 0.1f;
 		if (worldtransformplayer.translation_.x > 4.0f) {
@@ -342,8 +371,8 @@ void GameScene::BeamUpdate() {
 void GameScene::BeamMoob() {
 	for (int i = 0; i < 10; i++) {
 		if (beamflag[i] == 1) {
-			worldtransformbeam[i].translation_.z += 0.1f;
-			worldtransformbeam[i].rotation_.x += 0.1f;
+			worldtransformbeam[i].translation_.z += 0.2f;
+			worldtransformbeam[i].rotation_.x += 3.0f;
 			if (worldtransformbeam[i].translation_.z > 40) {
 				beamflag[i] = 0;
 			}
@@ -387,7 +416,7 @@ void GameScene::TuranukiUpdate() {
 void GameScene::TuranukiBorn() {
 
 	if (input_->PushKey(DIK_V) && turanukitimer == 0) {
-		turanukitimer = 350;
+		turanukitimer = 700;
 		turanukiflag = 1;
 		worldtransformturanuki.translation_.x = worldtransformplayer.translation_.x;
 		worldtransformturanuki.translation_.y = worldtransformplayer.translation_.y;
@@ -403,6 +432,7 @@ void GameScene::TuranukiMove() {
 
 	if (turanukiflag == 1) {
 		worldtransformturanuki.translation_.z += 0.3f;
+		worldtransformturanuki.rotation_.x += 3.0f;
 		if (worldtransformturanuki.translation_.z > 40) {
 			turanukiflag = 0;
 		}
@@ -414,34 +444,27 @@ void GameScene::SpTuranukiUpdate() {
 	SpTuranukiBorn();
 	SpTuranukiMove();
 
-	for (int i = 0; i < 5; i++)
-	{
+	for (int i = 0; i < 5; i++) {
 		worldtransformspturanuki[i].matWorld_ = MakeAffineMatrix(
 		    worldtransformspturanuki[i].scale_, worldtransformspturanuki[i].rotation_,
 		    worldtransformspturanuki[i].translation_);
 
 		worldtransformspturanuki[i].TransferMatrix();
 	}
-
 }
 
 void GameScene::SpTuranukiBorn() {
 
-	if (input_->PushKey(DIK_B) && spturanukitimer == 0)
-	{
-		spturanukitimer = 1300;
-		for (int i = 0; i < 5; i++)
-		{
-			if (i < 3)
-			{
+	if (input_->PushKey(DIK_B) && spturanukitimer == 0) {
+		spturanukitimer = 2500;
+		for (int i = 0; i < 5; i++) {
+			if (i < 3) {
 				spturanukiflag[i] = 1;
 				worldtransformspturanuki[i].translation_.x =
 				    worldtransformplayer.translation_.x + i * 2;
 				worldtransformspturanuki[i].translation_.y = worldtransformplayer.translation_.y;
 				worldtransformspturanuki[i].translation_.z = worldtransformplayer.translation_.z;
-			}
-			else
-			{
+			} else {
 				spturanukiflag[i] = 1;
 				worldtransformspturanuki[i].translation_.x =
 				    worldtransformplayer.translation_.x - (i - 2) * 2;
@@ -451,25 +474,22 @@ void GameScene::SpTuranukiBorn() {
 		}
 	}
 
-	if (spturanukitimer > 0)
-	{
+	if (spturanukitimer > 0) {
 		spturanukitimer--;
 	}
-
 }
 
 void GameScene::SpTuranukiMove() {
 
-	for (int i = 0; i < 5; i++)
-	{
+	for (int i = 0; i < 5; i++) {
 		if (spturanukiflag[i] == 1) {
 			worldtransformspturanuki[i].translation_.z += 0.3f;
+			worldtransformspturanuki[i].rotation_.x += 3.0f;
 			if (worldtransformspturanuki[i].translation_.z > 40) {
 				spturanukiflag[i] = 0;
 			}
 		}
 	}
-
 }
 
 void GameScene::UltUpdate() {
@@ -525,7 +545,7 @@ void GameScene::EnemyMove() {
 	for (int i = 0; i < 10; i++) {
 		if (enemyflag[i] == 1) {
 			worldtransformenemy[i].translation_.z -= 0.1f;
-			worldtransformenemy[i].translation_.z -= ingametimer / 1000.0f;
+			worldtransformenemy[i].translation_.z -= ingametimer / 300.0f;
 			worldtransformenemy[i].rotation_.x -= 0.1f;
 			worldtransformenemy[i].translation_.x += enemyspeed[i];
 			worldtransformenemy[i].translation_.y += enemyspeedy[i];
@@ -552,6 +572,8 @@ void GameScene::EnemyBorn() {
 		if (enemyflag[i] == 0) {
 			int x = rand() % 80;
 			float x2 = (float)x / 10 - 4;
+			int y = rand() % 20;
+			float y2 = (float)y - 10;
 			worldtransformenemy[i].translation_.y = 0;
 			enemyspeedy[i] = 0.1f;
 
@@ -562,7 +584,7 @@ void GameScene::EnemyBorn() {
 					enemyspeed[i] = -0.1f;
 				}
 				enemyflag[i] = 1;
-				worldtransformenemy[i].translation_.z = 40;
+				worldtransformenemy[i].translation_.z = 40 + y2;
 				worldtransformenemy[i].translation_.x = x2;
 			}
 			break;
@@ -656,16 +678,17 @@ void GameScene::CollisionTuranukiEnemy() {
 
 void GameScene::CollisionSpTuranukiEnemy() {
 
-	for (int i = 0; i < 10; i++) 
-	{
-		for (int j = 0; j < 5; j++)
-		{
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 5; j++) {
 			if (enemyflag[i] == 1 && spturanukiflag[j] == 1) {
-				float dx = abs(worldtransformenemy[i].translation_.x -
+				float dx =
+				    abs(worldtransformenemy[i].translation_.x -
 				        worldtransformspturanuki[j].translation_.x);
-				float dy = abs(worldtransformenemy[i].translation_.y -
+				float dy =
+				    abs(worldtransformenemy[i].translation_.y -
 				        worldtransformspturanuki[j].translation_.y);
-				float dz = abs(worldtransformenemy[i].translation_.z -
+				float dz =
+				    abs(worldtransformenemy[i].translation_.z -
 				        worldtransformspturanuki[j].translation_.z);
 
 				if (dx < 1 && dy < 1 && dz < 1) {
@@ -678,8 +701,6 @@ void GameScene::CollisionSpTuranukiEnemy() {
 			}
 		}
 	}
-	
-
 }
 
 void GameScene::CollisionUltEnemy() {
@@ -722,9 +743,7 @@ void GameScene::CollisionUltEnemy() {
 void GameScene::TitleUpdate() {
 
 	if (input_->TriggerKey(DIK_RETURN)) {
-		sceneMode = 0;
-		audio_->StopWave(voicehandlebgm);
-		voicehandlebgm = audio_->PlayWave(gamebgm, true);
+		sceneMode = 3;
 	}
 }
 
@@ -736,6 +755,18 @@ void GameScene::TitleDraw2DNear() {
 		spriteenter->Draw();
 	}
 }
+
+void GameScene::RuleUpdate() {
+
+	if (input_->TriggerKey(DIK_RETURN)) {
+		sceneMode = 0;
+
+		audio_->StopWave(voicehandlebgm);
+		voicehandlebgm = audio_->PlayWave(gamebgm, true);
+	}
+}
+
+void GameScene::RuleDraw2DNear() { spriterule->Draw(); }
 
 void GameScene::GameOverUpdate() {
 
@@ -765,17 +796,16 @@ void GameScene::GamePlayStart() {
 		gametimer = 0;
 	}
 
-	for (int i = 0; i < 5; i++)
-	{
+	for (int i = 0; i < 5; i++) {
 		spturanukiflag[i] = 0;
 	}
 	ingametimer = 0;
 	gamescore = 0;
 	playerlife = 3;
 	playertimer = 0;
-	turanukitimer = 350;
+	turanukitimer = 380;
 	turanukiflag = 0;
-	spturanukitimer = 0;
+	spturanukitimer = 2500;
 	ulttimer = 1500;
 	ultflag = 0;
 	worldtransformplayer.translation_.x = 0;
@@ -837,5 +867,16 @@ void GameScene::DrawScore() {
 
 	for (int i = 0; i < playerlife; i++) {
 		spritelife[i]->Draw();
+	}
+}
+
+void GameScene::DrawSkil() {
+
+	if (turanukitimer % 40 == 0) {
+		modelv->Draw();
+	}
+
+	if (spturanukitimer % 40 == 0) {
+		modelb->Draw();
 	}
 }
